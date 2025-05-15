@@ -1,70 +1,44 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import UrlCard from "@/components/UrlCard.vue";
-
-interface Url {
-    id: number;
-    name: string;
-    link: string;
-    description: string;
-    tags: string[];
-    status: "alive" | "redirected" | "dead";
-    workspace: { id: number; name: string };
-}
-
-interface Workspace {
-    id: number;
-    name: string;
-    description?: string;
-}
+import { useRoute } from "vue-router";
+import BookmarkCard from "@/components/BookmarkCard.vue";
+import { getBookmarks } from "@/api/bookmark/bookmarkAPI";
+import type { Bookmark } from "@/assets/types/bookmark";
+import type { Workspace } from "@/assets/types/workspace";
+import { getWorkspace } from "@/api/workspace/workspaceAPI";
 
 const route = useRoute();
-const router = useRouter();
-const workspaceId = Number(route.params.id);
+const workspaceId = Number(route.params.workspaceId);
 
 const workspace = ref<Workspace | null>(null);
-const urls = ref<Url[]>([]);
+const allBookmarks = ref<Bookmark[]>([]);
+const bookmarks = ref<Bookmark[]>([]);
 
-async function fetchWorkspace() {
-    workspace.value = {
-        id: workspaceId,
-        name: `Workspace #${workspaceId}`,
-        description: "A description for this workspace.",
-    };
-}
+const fetchWorkspace = async () => {
+    try {
+        workspace.value = await getWorkspace(workspaceId);
+    } catch (err) {
+        console.error("Failed to load workspace:", err);
+    }
+};
 
-async function fetchUrls() {
-    urls.value = [
-        {
-            id: 1,
-            name: "Vue.js",
-            link: "https://vuejs.org",
-            description: "The Progressive JS Framework",
-            tags: ["javascript", "framework"],
-            status: "alive",
-            workspace: { id: workspaceId, name: workspace.value?.name! },
-        },
-        {
-            id: 2,
-            name: "Django",
-            link: "https://www.djangoproject.com",
-            description: "The web framework for perfectionists with deadlines.",
-            tags: ["python", "backend"],
-            status: "alive",
-            workspace: { id: workspaceId, name: workspace.value?.name! },
-        },
-    ];
-}
+const fetchBookmarks = async () => {
+    try {
+        const userId = Number(localStorage.getItem("userId"));
+        allBookmarks.value = await getBookmarks(userId);
 
-onMounted(async () => {
-    await fetchWorkspace();
-    await fetchUrls();
+        bookmarks.value = allBookmarks.value.filter((b) =>
+            b.workspaces.some((ws) => ws.id === workspaceId)
+        );
+    } catch (err) {
+        bookmarks.value = [];
+    }
+};
+
+onMounted(() => {
+    fetchWorkspace();
+    fetchBookmarks();
 });
-
-function goToUrlDetail(id: number) {
-    router.push(`/urls/${id}`);
-}
 </script>
 
 <template>
@@ -73,18 +47,17 @@ function goToUrlDetail(id: number) {
             <h1 class="text-3xl font-bold">{{ workspace.name }}</h1>
             <p class="text-gray-600 mt-2">{{ workspace.description }}</p>
         </div>
+
         <div
-            v-if="urls.length"
+            v-if="bookmarks.length"
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-            <UrlCard
-                v-for="url in urls"
-                :key="url.id"
-                :url="url"
-                @select="goToUrlDetail"
+            <BookmarkCard
+                v-for="bookmark in bookmarks"
+                :key="bookmark.id"
+                :bookmark="bookmark"
             />
         </div>
-        <p v-else class="text-gray-500">No URLs in this workspace yet.</p>
     </div>
 </template>
 

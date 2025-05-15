@@ -1,31 +1,21 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
+import { OhVueIcon } from "oh-vue-icons";
 
 interface NavItem {
     to: string;
     label: string;
 }
 
-const props = defineProps<{ items: NavItem[] }>();
+const props = defineProps<{
+    items: NavItem[];
+}>();
 </script>
 
 <template>
     <div class="dropdown lg:hidden">
         <label tabindex="0" class="btn btn-ghost">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M4 6h16M4 12h16M4 18h16"
-                />
-            </svg>
+            <OhVueIcon name="co-hamburger-menu" scale="1.8" />
         </label>
         <ul
             tabindex="0"

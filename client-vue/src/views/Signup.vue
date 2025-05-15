@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import RegisterFrom from "@/components/forms/Register.vue";
+import SignupForm from "@/components/forms/Signup.vue";
 </script>
 
 <template>
-    <RegisterFrom />
+    <SignupForm />
 </template>
 
 <style scoped></style>

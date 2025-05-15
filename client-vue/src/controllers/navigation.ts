@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/Login.vue";
-import Register from "../views/Register.vue";
+import Signup from "../views/Signup.vue";
 import Home from "../views/Home.vue";
 import WorkspaceList from "@/views/WorkspaceList.vue";
 import Workspace from "@/views/Workspace.vue";
-import UrlList from "@/views/UrlList.vue";
+import BookmarkList from "@/views/BookmarkList.vue";
+import TagList from "@/views/TagList.vue";
 
 const routes = [
     {
@@ -18,9 +19,9 @@ const routes = [
         component: Login,
     },
     {
-        path: "/register",
-        name: "Register",
-        component: Register,
+        path: "/signup",
+        name: "Signup",
+        component: Signup,
     },
     {
         path: "/workspaces",
@@ -33,9 +34,14 @@ const routes = [
         component: Workspace,
     },
     {
-        path: "/urls",
-        name: "Url",
-        component: UrlList,
+        path: "/bookmarks",
+        name: "Bookmarks",
+        component: BookmarkList,
+    },
+    {
+        path: "/tags",
+        name: "Tags",
+        component: TagList,
     },
 ];
 

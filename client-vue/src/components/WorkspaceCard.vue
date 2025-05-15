@@ -1,22 +1,15 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from "vue";
+import { defineProps } from "vue";
+import { useRouter } from "vue-router";
+import type { Workspace } from "@/assets/types/workspace";
 
-interface Workspace {
-    id: number;
-    name: string;
-}
+const props = defineProps<{ workspace: Workspace }>();
 
-const props = defineProps<{
-    workspace: Workspace;
-}>();
+const router = useRouter();
 
-const emit = defineEmits<{
-    (e: "select", id: number): void;
-}>();
-
-function handleClick() {
-    emit("select", props.workspace.id);
-}
+const handleClick = () => {
+    router.push(`/workspaces/${props.workspace.id}`);
+};
 </script>
 
 <template>
